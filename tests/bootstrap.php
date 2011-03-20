@@ -12,7 +12,6 @@ $loader->registerNamespaces(array(
     'Mandango\Behavior' => __DIR__.'/../src',
     'Mandango\Mondator' => $config['mondator_dir'].'/src',
     'Mandango'          => $config['mandango_dir'].'/src',
-    'Doctrine\Common'   => $config['doctrine_common_dir'].'/lib',
     'Model'             => __DIR__,
 ));
 $loader->register();
