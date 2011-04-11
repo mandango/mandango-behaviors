@@ -47,4 +47,23 @@ class HashableTest extends TestCase
         $this->assertSame($documents[3], \Model\Hashable::repository()->findByHash($documents[3]->getHash()));
         $this->assertSame($documents[6], \Model\Hashable::repository()->findByHash($documents[6]->getHash()));
     }
+
+    public function testField()
+    {
+        $document = new \Model\HashableField();
+        $document->setField('foo');
+        $document->save();
+
+        $this->assertNotNull($document->getAnotherField());
+        $this->assertInternalType('string', $document->getAnotherField());
+    }
+
+    public function testLength()
+    {
+        $document = new \Model\HashableLength();
+        $document->setField('foo');
+        $document->save();
+
+        $this->assertSame(5, strlen($document->getHash()));
+    }
 }

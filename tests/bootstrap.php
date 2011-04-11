@@ -18,16 +18,32 @@ $loader->register();
 
 // mondator
 $configClasses = array(
+    // Hashable
     'Model\Hashable' => array(
         'fields' => array(
             'field' => 'string',
         ),
         'behaviors' => array(
-            array(
-                'class' => 'Mandango\Behavior\Hashable',
-            ),
+            array('class' => 'Mandango\Behavior\Hashable',),
         ),
     ),
+    'Model\HashableField' => array(
+        'fields' => array(
+            'field' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Hashable', 'options' => array('field' => 'another_field')),
+        ),
+    ),
+    'Model\HashableLength' => array(
+        'fields' => array(
+            'field' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Hashable', 'options' => array('length' => 5)),
+        ),
+    ),
+    // Ipable
     'Model\Ipable' => array(
         'fields' => array(
             'field' => 'string',
@@ -38,6 +54,7 @@ $configClasses = array(
             ),
         ),
     ),
+    // Sluggable
     'Model\Sluggable' => array(
         'fields' => array(
             'title' => 'string',
@@ -51,6 +68,7 @@ $configClasses = array(
             )
         ),
     ),
+    // Timestampable
     'Model\Timestampable' => array(
         'fields' => array(
             'field' => 'string'
