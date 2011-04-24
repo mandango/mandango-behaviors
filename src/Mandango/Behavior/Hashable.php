@@ -21,7 +21,6 @@
 
 namespace Mandango\Behavior;
 
-use Mandango\Inflector;
 use Mandango\Mondator\ClassExtension;
 use Mandango\Mondator\Definition\Method;
 
@@ -67,7 +66,7 @@ class Hashable extends ClassExtension
         $this->configClass['indexes'][] = array('keys' => array($field => 1), array('unique' => 1));
 
         // event
-        $fieldSetter = 'set'.Inflector::camelize($field);
+        $fieldSetter = 'set'.ucfirst($field);
 
         $method = new Method('public', 'updateHashableHash', '', <<<EOF
         do {
@@ -76,7 +75,7 @@ class Hashable extends ClassExtension
                 \$hash .= substr(sha1(microtime(true).mt_rand(111111, 999999)), mt_rand(0, 39), 1);
             };
 
-            \$result = \\{$this->class}::collection()->findOne(array('$field' => \$hash));
+            \$result = \\{$this->class}::getRepository()->getCollection()->findOne(array('$field' => \$hash));
         } while (\$result);
 
         \$this->$fieldSetter(\$hash);
@@ -86,7 +85,7 @@ EOF
 
         // repository ->findOneByHash()
         $method = new Method('public', 'findByHash', '$hash', <<<EOF
-        return \$this->query(array('$field' => \$hash))->one();
+        return \$this->createQuery(array('$field' => \$hash))->one();
 EOF
         );
         $method->setDocComment(<<<EOF

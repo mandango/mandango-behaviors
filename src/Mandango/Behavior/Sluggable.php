@@ -21,7 +21,6 @@
 
 namespace Mandango\Behavior;
 
-use Mandango\Inflector;
 use Mandango\Mondator\ClassExtension;
 use Mandango\Mondator\Definition\Method;
 
@@ -37,13 +36,13 @@ class Sluggable extends ClassExtension
      */
     protected function setUp()
     {
-        $this->addRequiredOption('from_field');
+        $this->addRequiredOption('fromField');
 
         $this->addOptions(array(
-            'slug_field' => 'slug',
-            'unique'     => true,
-            'update'     => false,
-            'builder'    => array('\Mandango\Behavior\Util\SluggableUtil', 'slugify'),
+            'slugField' => 'slug',
+            'unique'    => true,
+            'update'    => false,
+            'builder'   => array('\Mandango\Behavior\Util\SluggableUtil', 'slugify'),
         ));
     }
 
@@ -53,12 +52,12 @@ class Sluggable extends ClassExtension
     protected function doConfigClassProcess()
     {
         // field
-        $this->configClass['fields'][$this->getOption('slug_field')] = 'string';
+        $this->configClass['fields'][$this->getOption('slugField')] = 'string';
 
         // index
         if ($this->getOption('unique')) {
             $this->configClass['indexes'][] = array(
-                'keys'    => array($this->getOption('slug_field') => 1),
+                'keys'    => array($this->getOption('slugField') => 1),
                 'options' => array('unique' => 1),
             );
         }
@@ -76,19 +75,19 @@ class Sluggable extends ClassExtension
     protected function doClassProcess()
     {
         // field
-        $slugField = $this->getOption('slug_field');
+        $slugField = $this->getOption('slugField');
 
         // update slug
-        $fromField = $this->getOption('from_field');
-        $fromFieldCamelized = Inflector::camelize($fromField);
-        $slugFieldCamelized = Inflector::camelize($slugField);
+        $fromField = $this->getOption('fromField');
+        $fromFieldCamelized = ucfirst($fromField);
+        $slugFieldCamelized = ucfirst($slugField);
         $builder = var_export($this->getOption('builder'), true);
 
         $uniqueCode = '';
         if ($this->getOption('unique')) {
             $uniqueCode = <<<EOF
         \$similarSlugs = array();
-        foreach (\\{$this->class}::collection()
+        foreach (\\{$this->class}::getRepository()->getCollection()
             ->find(array('$slugField' => new \MongoRegex('/^'.\$slug.'/')))
         as \$result) {
             \$similarSlugs[] = \$result['$slugField'];
@@ -113,7 +112,7 @@ EOF
 
         // repository ->findBySlug()
         $method = new Method('public', 'findBySlug', '$slug', <<<EOF
-        return \$this->query(array('$slugField' => \$slug))->one();
+        return \$this->createQuery(array('$slugField' => \$slug))->one();
 EOF
         );
         $method->setDocComment(<<<EOF

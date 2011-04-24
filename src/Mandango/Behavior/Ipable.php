@@ -21,7 +21,6 @@
 
 namespace Mandango\Behavior;
 
-use Mandango\Inflector;
 use Mandango\Mondator\ClassExtension;
 use Mandango\Mondator\Definition\Method;
 
@@ -38,11 +37,11 @@ class Ipable extends ClassExtension
     protected function setUp()
     {
         $this->addOptions(array(
-            'created_enabled' => true,
-            'created_field'   => 'created_from',
-            'updated_enabled' => true,
-            'updated_field'   => 'updated_from',
-            'get_ip_callable' => array('Mandango\Behavior\Util\IpableUtil', 'getIp'),
+            'createdEnabled' => true,
+            'createdField'   => 'createdFrom',
+            'updatedEnabled' => true,
+            'updatedField'   => 'updatedFrom',
+            'getIpCallable' => array('Mandango\Behavior\Util\IpableUtil', 'getIp'),
         ));
     }
 
@@ -52,14 +51,14 @@ class Ipable extends ClassExtension
     protected function doConfigClassProcess()
     {
         // created
-        if ($this->getOption('created_enabled')) {
-            $this->configClass['fields'][$this->getOption('created_field')] = 'string';
+        if ($this->getOption('createdEnabled')) {
+            $this->configClass['fields'][$this->getOption('createdField')] = 'string';
             $this->configClass['events']['preInsert'][] = 'updateIpableCreated';
         }
 
         // updated
-        if ($this->getOption('updated_enabled')) {
-            $this->configClass['fields'][$this->getOption('updated_field')] = 'string';
+        if ($this->getOption('updatedEnabled')) {
+            $this->configClass['fields'][$this->getOption('updatedField')] = 'string';
             $this->configClass['events']['preUpdate'][] = 'updateIpableUpdated';
         }
     }
@@ -70,9 +69,9 @@ class Ipable extends ClassExtension
     protected function doClassProcess()
     {
         // created
-        if ($this->getOption('created_enabled')) {
-            $fieldSetter = 'set'.Inflector::camelize($this->getOption('created_field'));
-            $getIpCallable = var_export($this->getOption('get_ip_callable'), true);
+        if ($this->getOption('createdEnabled')) {
+            $fieldSetter = 'set'.ucfirst($this->getOption('createdField'));
+            $getIpCallable = var_export($this->getOption('getIpCallable'), true);
 
             $method = new Method('protected', 'updateIpableCreated', '', <<<EOF
         \$this->$fieldSetter(call_user_func($getIpCallable));
@@ -82,9 +81,9 @@ EOF
         }
 
        // updated
-        if ($this->getOption('updated_enabled')) {
-            $fieldSetter = 'set'.Inflector::camelize($this->getOption('updated_field'));
-            $getIpCallable = var_export($this->getOption('get_ip_callable'), true);
+        if ($this->getOption('updatedEnabled')) {
+            $fieldSetter = 'set'.ucfirst($this->getOption('updatedField'));
+            $getIpCallable = var_export($this->getOption('getIpCallable'), true);
 
             $method = new Method('protected', 'updateIpableUpdated', '', <<<EOF
         \$this->$fieldSetter(call_user_func($getIpCallable));

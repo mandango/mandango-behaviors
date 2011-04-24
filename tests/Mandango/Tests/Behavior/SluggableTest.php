@@ -51,7 +51,7 @@ class SluggableTest extends TestCase
             $document->save();
         }
 
-        $this->assertSame($documents[3], \Model\Sluggable::repository()->findBySlug($documents[3]->getSlug()));
-        $this->assertSame($documents[6], \Model\Sluggable::repository()->findBySlug($documents[6]->getSlug()));
+        $this->assertSame($documents[3], \Model\Sluggable::getRepository()->findBySlug($documents[3]->getSlug()));
+        $this->assertSame($documents[6], \Model\Sluggable::getRepository()->findBySlug($documents[6]->getSlug()));
     }
 }

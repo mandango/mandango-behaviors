@@ -21,7 +21,6 @@
 
 namespace Mandango\Behavior;
 
-use Mandango\Inflector;
 use Mandango\Mondator\ClassExtension;
 use Mandango\Mondator\Definition\Method;
 
@@ -38,10 +37,10 @@ class Timestampable extends ClassExtension
     protected function setUp()
     {
         $this->addOptions(array(
-            'created_enabled' => true,
-            'created_field'   => 'created_at',
-            'updated_enabled' => true,
-            'updated_field'   => 'updated_at',
+            'createdEnabled' => true,
+            'createdField'   => 'createdAt',
+            'updatedEnabled' => true,
+            'updatedField'   => 'updatedAt',
         ));
     }
 
@@ -51,14 +50,14 @@ class Timestampable extends ClassExtension
     protected function doConfigClassProcess()
     {
         // created
-        if ($this->getOption('created_enabled')) {
-            $this->configClass['fields'][$this->getOption('created_field')] = 'date';
+        if ($this->getOption('createdEnabled')) {
+            $this->configClass['fields'][$this->getOption('createdField')] = 'date';
             $this->configClass['events']['preInsert'][] = 'updateTimestampableCreated';
         }
 
         // updated
-        if ($this->getOption('updated_enabled')) {
-            $this->configClass['fields'][$this->getOption('updated_field')] = 'date';
+        if ($this->getOption('updatedEnabled')) {
+            $this->configClass['fields'][$this->getOption('updatedField')] = 'date';
             $this->configClass['events']['preUpdate'][] = 'updateTimestampableUpdated';
         }
     }
@@ -69,8 +68,8 @@ class Timestampable extends ClassExtension
     protected function doClassProcess()
     {
         // created
-        if ($this->getOption('created_enabled')) {
-            $fieldSetter = 'set'.Inflector::camelize($this->getOption('created_field'));
+        if ($this->getOption('createdEnabled')) {
+            $fieldSetter = 'set'.ucfirst($this->getOption('createdField'));
 
             $method = new Method('protected', 'updateTimestampableCreated', '', <<<EOF
         \$this->$fieldSetter(new \DateTime());
@@ -80,8 +79,8 @@ EOF
         }
 
         // updated
-        if ($this->getOption('updated_enabled')) {
-            $fieldSetter = 'set'.Inflector::camelize($this->getOption('updated_field'));
+        if ($this->getOption('updatedEnabled')) {
+            $fieldSetter = 'set'.ucfirst($this->getOption('updatedField'));
 
             $method = new Method('protected', 'updateTimestampableUpdated', '', <<<EOF
         \$this->$fieldSetter(new \DateTime());

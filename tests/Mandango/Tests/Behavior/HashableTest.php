@@ -42,10 +42,10 @@ class HashableTest extends TestCase
             $documents[] = $document = new \Model\Hashable();
             $document->setField('foo'.$i);
         }
-        \Model\Hashable::repository()->save($documents);
+        \Model\Hashable::getRepository()->save($documents);
 
-        $this->assertSame($documents[3], \Model\Hashable::repository()->findByHash($documents[3]->getHash()));
-        $this->assertSame($documents[6], \Model\Hashable::repository()->findByHash($documents[6]->getHash()));
+        $this->assertSame($documents[3], \Model\Hashable::getRepository()->findByHash($documents[3]->getHash()));
+        $this->assertSame($documents[6], \Model\Hashable::getRepository()->findByHash($documents[6]->getHash()));
     }
 
     public function testField()

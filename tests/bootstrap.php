@@ -32,7 +32,7 @@ $configClasses = array(
             'field' => 'string',
         ),
         'behaviors' => array(
-            array('class' => 'Mandango\Behavior\Hashable', 'options' => array('field' => 'another_field')),
+            array('class' => 'Mandango\Behavior\Hashable', 'options' => array('field' => 'anotherField')),
         ),
     ),
     'Model\HashableLength' => array(
@@ -63,7 +63,7 @@ $configClasses = array(
             array(
                 'class'   => 'Mandango\Behavior\Sluggable',
                 'options' => array(
-                    'from_field' => 'title',
+                    'fromField' => 'title',
                 ),
             )
         ),
