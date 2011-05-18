@@ -77,7 +77,7 @@ class Sluggable extends ClassExtension
         if ($this->getOption('unique')) {
             $uniqueCode = <<<EOF
         \$similarSlugs = array();
-        foreach (\\{$this->class}::getRepository()->getCollection()
+        foreach (\$this->getRepository()->getCollection()
             ->find(array('$slugField' => new \MongoRegex('/^'.\$slug.'/')))
         as \$result) {
             \$similarSlugs[] = \$result['$slugField'];

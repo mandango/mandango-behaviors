@@ -19,13 +19,13 @@ class SluggableTest extends TestCase
     {
         $documents = array();
 
-        $documents[1] = new \Model\Sluggable();
+        $documents[1] = $this->mandango->create('Model\Sluggable');
         $documents[1]->setTitle(' Testing Sluggable Extensión ');
         $documents[1]->save();
 
         $this->assertSame('testing-sluggable-extension', $documents[1]->getSlug());
 
-        $documents[2] = new \Model\Sluggable();
+        $documents[2] = $this->mandango->create('Model\Sluggable');
         $documents[2]->setTitle(' Testing Sluggable Extensión ');
         $documents[2]->save();
 
@@ -36,12 +36,14 @@ class SluggableTest extends TestCase
     {
         $documents = array();
         for ($i = 0; $i < 9; $i++) {
-            $documents[$i] = $document = new \Model\Sluggable();
+            $documents[$i] = $document = $this->mandango->create('Model\Sluggable');
             $document->setTitle('foo');
             $document->save();
         }
 
-        $this->assertSame($documents[3], \Model\Sluggable::getRepository()->findBySlug($documents[3]->getSlug()));
-        $this->assertSame($documents[6], \Model\Sluggable::getRepository()->findBySlug($documents[6]->getSlug()));
+        $repository = $this->mandango->getRepository('Model\Sluggable');
+
+        $this->assertSame($documents[3], $repository->findBySlug($documents[3]->getSlug()));
+        $this->assertSame($documents[6], $repository->findBySlug($documents[6]->getSlug()));
     }
 }

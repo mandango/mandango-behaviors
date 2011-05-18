@@ -17,7 +17,7 @@ class TimestampableTest extends TestCase
 {
     public function testTimestampable()
     {
-        $document = new \Model\Timestampable();
+        $document = $this->mandango->create('Model\Timestampable');
         $document->setField('foo');
         $document->save();
 

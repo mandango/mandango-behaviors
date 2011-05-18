@@ -87,9 +87,9 @@ $mondator = new Mondator();
 $mondator->setConfigClasses($configClasses);
 $mondator->setExtensions(array(
     new Mandango\Extension\Core(array(
-        'metadata_class'  => 'Model\Mapping\Metadata',
-        'metadata_output' => __DIR__.'/Model/Mapping',
-        'default_output'  => __DIR__.'/Model',
+        'metadata_factory_class'  => 'Model\Mapping\MetadataFactory',
+        'metadata_factory_output' => __DIR__.'/Model/Mapping',
+        'default_output'          => __DIR__.'/Model',
     )),
 ));
 $mondator->process();

@@ -19,7 +19,7 @@ class IpableTest extends TestCase
     {
         $_SERVER['REMOTE_ADDR'] = '192.168.0.1';
 
-        $document = new \Model\Ipable();
+        $document = $this->mandango->create('Model\Ipable');
         $document->setField('foo');
         $document->save();
 

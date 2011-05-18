@@ -12,7 +12,6 @@
 namespace Mandango\Tests;
 
 use Mandango\Cache\ArrayCache;
-use Mandango\Container;
 use Mandango\Connection;
 use Mandango\Mandango;
 use Mandango\Archive;
@@ -23,15 +22,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
     static protected $staticConnection;
     static protected $staticMandango;
 
-    protected $metadataClass = 'Model\Mapping\Metadata';
+    protected $metadataFactoryClass = 'Model\Mapping\MetadataFactory';
     protected $server = 'mongodb://localhost:27017';
     protected $dbName = 'mandango_behaviors_tests';
 
     protected $connection;
     protected $mandango;
     protected $unitOfWork;
-    protected $metadata;
-    protected $queryCache;
+    protected $metadataFactory;
+    protected $cache;
     protected $mongo;
     protected $db;
 
@@ -43,14 +42,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->connection = static::$staticConnection;
 
         if (!static::$staticMandango) {
-            static::$staticMandango = new Mandango(new $this->metadataClass, new ArrayCache(), function($log) {});
+            static::$staticMandango = new Mandango(new $this->metadataFactoryClass, new ArrayCache(), function($log) {});
             static::$staticMandango->setConnection('default', $this->connection);
             static::$staticMandango->setDefaultConnectionName('default');
         }
         $this->mandango = static::$staticMandango;
         $this->unitOfWork = $this->mandango->getUnitOfWork();
-        $this->metadata = $this->mandango->getMetadata();
-        $this->queryCache = $this->mandango->getQueryCache();
+        $this->metadataFactory = $this->mandango->getMetadataFactory();
+        $this->cache = $this->mandango->getCache();
 
         foreach ($this->mandango->getAllRepositories() as $repository) {
             $repository->getIdentityMap()->clear();
@@ -62,16 +61,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
         foreach ($this->db->listCollections() as $collection) {
             $collection->drop();
         }
-
-        Container::set('default', $this->mandango);
-        Container::setDefaultName('default');
     }
 
     protected function tearDown()
     {
-        Container::clear();
         Archive::clear();
         TypeContainer::reset();
-        $this->queryCache->clear();
     }
 }
