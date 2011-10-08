@@ -100,8 +100,8 @@ EOF
         );
         $this->definitions['document_base']->addMethod($method);
 
-        // repository ->findBySlug()
-        $method = new Method('public', 'findBySlug', '$slug', <<<EOF
+        // repository ->findOneBySlug()
+        $method = new Method('public', 'findOneBySlug', '$slug', <<<EOF
         return \$this->createQuery(array('$slugField' => \$slug))->one();
 EOF
         );

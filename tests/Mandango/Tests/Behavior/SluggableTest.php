@@ -32,7 +32,7 @@ class SluggableTest extends TestCase
         $this->assertSame('testing-sluggable-extension-2', $documents[2]->getSlug());
     }
 
-    public function testRepositoryFindBySlug()
+    public function testRepositoryFindOneBySlug()
     {
         $documents = array();
         for ($i = 0; $i < 9; $i++) {
@@ -43,7 +43,7 @@ class SluggableTest extends TestCase
 
         $repository = $this->mandango->getRepository('Model\Sluggable');
 
-        $this->assertSame($documents[3], $repository->findBySlug($documents[3]->getSlug()));
-        $this->assertSame($documents[6], $repository->findBySlug($documents[6]->getSlug()));
+        $this->assertSame($documents[3], $repository->findOneBySlug($documents[3]->getSlug()));
+        $this->assertSame($documents[6], $repository->findOneBySlug($documents[6]->getSlug()));
     }
 }
