@@ -16,7 +16,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Doctrator. If not, see <http://www.gnu.org/licenses/>.
+ * along with mandango. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace Mandango\Behavior;
@@ -33,9 +33,9 @@ use Mandango\Mondator\Definition\Method;
  */
 class Sortable extends ClassExtension
 {
-    protected $column;
-    protected $columnSetter;
-    protected $columnGetter;
+    protected $field;
+    protected $fieldSetter;
+    protected $fieldGetter;
 
     /**
      * @inheritdoc
@@ -43,7 +43,7 @@ class Sortable extends ClassExtension
     protected function setUp()
     {
         $this->addOptions(array(
-            'column'       => 'position',
+            'field'       => 'position',
             'new_position' => 'bottom',
         ));
     }
@@ -53,12 +53,8 @@ class Sortable extends ClassExtension
      */
     protected function doConfigClassProcess()
     {
-        $column = $this->getOption('column');
-
-       
- 		$this->configClass['fields'][$column] = 'integer';
- 
- 
+        $field = $this->getOption('field');
+ 		$this->configClass['fields'][$field] = 'integer';
         $this->configClass['events']['preInsert'][] = 'sortableSetPosition';
         $this->configClass['events']['preUpdate'][]  = 'sortableSetPosition';
     }
@@ -73,10 +69,10 @@ class Sortable extends ClassExtension
             throw new \RuntimeException(sprintf('The new_position "%s" is not valid.', $this->getOption('new_position')));
         }
 
-        // position column
-        $this->column       = $this->getOption('column');
-        $this->columnSetter = 'set'.ucfirst($this->column);
-        $this->columnGetter = 'get'.ucfirst($this->column);
+        // position field
+        $this->field       = $this->getOption('field');
+        $this->fieldSetter = 'set'.ucfirst($this->field);
+        $this->fieldGetter = 'get'.ucfirst($this->field);
 
         // methods
         $this->processEntityIsFirstMethod();
@@ -88,9 +84,7 @@ class Sortable extends ClassExtension
         $this->processEntityMoveDownMethod();
         $this->processRepositoryGetMinPositionMethod();
         $this->processRepositoryGetMaxPositionMethod();
-		
-		 
-		 
+
         // events
         $this->processSortableSetPositionMethod();
     }
@@ -103,7 +97,7 @@ class Sortable extends ClassExtension
     protected function processEntityIsFirstMethod()
     {
         $method = new Method('public', 'isFirst', '', <<<EOF
-        return \$this->{$this->columnGetter}() === \$this->getRepository()->getMinPosition();
+        return \$this->{$this->fieldGetter}() === \$this->getRepository()->getMinPosition();
 EOF
         );
         $method->setDocComment(<<<EOF
@@ -124,7 +118,7 @@ EOF
     protected function processEntityIsLastMethod()
     {
         $method = new Method('public', 'isLast', '', <<<EOF
-        return \$this->{$this->columnGetter}() === \$this->getRepository()->getMaxPosition();
+        return \$this->{$this->fieldGetter}() === \$this->getRepository()->getMaxPosition();
 EOF
         );
         $method->setDocComment(<<<EOF
@@ -146,7 +140,7 @@ EOF
     {
         $method = new Method('public', 'getNext', '', <<<EOF
 		\$query = \$this->getRepository()->createQuery();
-		\$query->criteria(array('{$this->column}' => \$this->{$this->columnGetter}() + 1)); 
+		\$query->criteria(array('{$this->field}' => \$this->{$this->fieldGetter}() + 1)); 
 		\$results = \$query->one();
         return \$results ? \$results : false;
 
@@ -172,7 +166,7 @@ EOF
         $method = new Method('public', 'getPrevious', '', <<<EOF
         
 		\$query = \$this->getRepository()->createQuery();
-		\$query->criteria(array('{$this->column}' => \$this->{$this->columnGetter}() - 1)); 
+		\$query->criteria(array('{$this->field}' => \$this->{$this->fieldGetter}() - 1)); 
 		\$results = \$query->one();
         return \$results ? \$results : false;
 
@@ -200,20 +194,20 @@ EOF
             throw new \InvalidArgumentException('The entity is not an instance of \\{$this->class}.');
         }
 
-        \$oldPosition = \$this->columnGetter();
-        \$newPosition = \$document->columnGetter();
+        \$oldPosition = \$this->{$this->fieldGetter}();
+        \$newPosition = \$document->{$this->fieldGetter}();
 		
 		\$result  = \$this->getRepository()->findOneById(\$this->getId());
 		if(\$result):
 		
-			\$result->columnSetter(\$newPosition);
+			\$result->{$this->fieldSetter}(\$newPosition);
 			\$query = \$result->queryForSave();
 			\$this->getRepository()->getCollection()->update(array('_id' => \$result->getId()), \$query);		
 		endif;
 
 		\$result  = \$this->getRepository()->findOneById(\$document->getId());
 		if(\$result):
-			\$result->columnSetter(\$oldPosition);
+			\$result->{$this->fieldSetter}(\$oldPosition);
 			\$query = \$result->queryForSave();
 			\$this->getRepository()->getCollection()->update(array('_id' => \$result->getId()), \$query);		
 		endif;
@@ -297,12 +291,12 @@ EOF
 		
 		\$position = false;
 		\$result = \$this->createQuery();
-		\$result->sort(array('{$this->column}'=>1));
+		\$result->sort(array('{$this->field}'=>1));
 		\$result->limit(1)->one();
 		
 		
 		foreach(\$result as \$r):
-			\$position =  \$r->{$this->columnGetter}();
+			\$position =  \$r->{$this->fieldGetter}();
 		endforeach;
 		
 		
@@ -333,12 +327,12 @@ EOF
 		
 		\$position = false;
 		\$result = \$this->createQuery();
-		\$result->sort(array('{$this->column}'=>-1));
+		\$result->sort(array('{$this->field}'=>-1));
 		\$result->limit(1)->one();
 		
 		
 		foreach(\$result as \$r):
-			\$position =  \$r->{$this->columnGetter}();
+			\$position =  \$r->{$this->fieldGetter}();
 		endforeach;
 		
 		
@@ -371,22 +365,22 @@ EOF
         if (\$this->isNew()):
             \$position = \$maxPosition + 1;
         else:
-            if (\$this->isFieldModified('{$this->column}') === false):
+            if (\$this->isFieldModified('{$this->field}') === false):
                 return;
             endif;
 			\$changeSet = \$this->getDocumentData();
-            \$oldPosition = \$this->getOriginalFieldValue('{$this->column}');
-            \$position    = \$changeSet['fields']['{$this->column}'];
+            \$oldPosition = \$this->getOriginalFieldValue('{$this->field}');
+            \$position    = \$changeSet['fields']['{$this->field}'];
         endif;
 
         // move entities
         if (\$this->isNew()):	
 			\$query = \$this->getRepository()->createQuery();
-			\$query->criteria(array('{$this->column}' => array ('\$gte' =>\$position))); 
+			\$query->criteria(array('{$this->field}' => array ('\$gte' =>\$position))); 
 			\$results = \$query->all();
 			if(\$results):
 				foreach(\$result as \$r):
-					\$r->columnSetter(\$r->columnGetter()+1);
+					\$r->{$this->fieldSetter}(\$r->{$this->fieldGetter}()+1);
 					\$query = \$r->queryForSave();
 					\$this->getRepository()->getCollection()->update(array('_id' => \$r->getId()), \$query);		
 				endforeach;	
@@ -397,20 +391,20 @@ EOF
 			\$max = max(\$position, \$oldPosition);
 			\$query = \$this->getRepository()->createQuery();
 			
-			if(\$sign == '-' ) \$query->criteria(array('{$this->column}' => array ('\$gt' =>\$min, '\$lte' => \$max ))); 
-			else \$query->criteria(array('{$this->column}' => array ('\$gte' =>\$min, '\$lt' => \$max ))); 
+			if(\$sign == '-' ) \$query->criteria(array('{$this->field}' => array ('\$gt' =>\$min, '\$lte' => \$max ))); 
+			else \$query->criteria(array('{$this->field}' => array ('\$gte' =>\$min, '\$lt' => \$max ))); 
 			
 			\$results = \$query->all();
 			if(\$results):
 				foreach(\$results as \$r):
-					if(\$sign == '-' ) \$r->columnsetter(\$r->columnGetter() - 1);
- 					else  \$r->columnsetter(\$r->columnGetter() + 1);
+					if(\$sign == '-' ) \$r->{$this->fieldSetter}(\$r->{$this->fieldGetter}() - 1);
+ 					else  \$r->{$this->fieldSetter}(\$r->{$this->fieldGetter}() + 1);
 					\$query = \$r->queryForSave();
 					\$this->getRepository()->getCollection()->update(array('_id' => \$r->getId()), \$query);		
 				endforeach;	
 			endif;
 		 endif;
-		 \$this->columnSetter(\$position);
+		 \$this->{$this->fieldSetter}(\$position);
        
 EOF
         );
