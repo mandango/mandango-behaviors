@@ -17,6 +17,10 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Mandango. If not, see <http://www.gnu.org/licenses/>.
+ * Example in schema.yml 
+ *     behaviors: 
+ *       - {class: Mandango\Behavior\Translatable,options: { TranslateFields: {My Field:My Field}}}       
+ *
  */
 
 namespace Mandango\Behavior;
