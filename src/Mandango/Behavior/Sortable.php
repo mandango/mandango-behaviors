@@ -26,9 +26,9 @@ use Mandango\Mondator\Definition\Method;
 
 
 /**
- * The doctrator Sortable behavior.
+ * The Mandango Sortable behavior.
  *
- * @package Doctrator
+ * @package Mandango
  * @author Alex <pablodip@gmail.com>
  */
 class Sortable extends ClassExtension
