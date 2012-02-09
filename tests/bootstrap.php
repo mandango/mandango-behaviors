@@ -72,6 +72,32 @@ $configClasses = array(
             )
         ),
     ),
+    // Sortable
+    'Model\Sortable' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable'),
+        ),
+    ),
+    'Model\SortableTop' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable', 'options' => array('new_position' => 'top')),
+        ),
+    ),
+    'Model\SortableScope' => array(
+        'fields' => array(
+            'type' => 'string',
+            'name' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable', 'options' => array('scope' => array('type'))),
+        ),
+    ),
     // Timestampable
     'Model\Timestampable' => array(
         'fields' => array(
