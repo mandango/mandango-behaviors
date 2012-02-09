@@ -1,0 +1,23 @@
+<?php
+
+    public function getMinPosition(array $scopeCriteria = array())
+    {
+        $document = $this
+            ->createQuery($scopeCriteria)
+            ->sort(array('{{ options.field }}' => 1))
+            ->one()
+        ;
+
+        return $document ? $document->get{{ options.field|ucfirst }}() : null;
+    }
+
+    public function getMaxPosition(array $scopeCriteria = array())
+    {
+        $document = $this
+            ->createQuery($scopeCriteria)
+            ->sort(array('{{ options.field }}' => -1))
+            ->one()
+        ;
+
+        return $document ? $document->get{{ options.field|ucfirst }}() : null;
+    }
