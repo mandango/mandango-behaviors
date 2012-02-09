@@ -1,5 +1,12 @@
 <?php
 
+    /**
+     * Returns the min position.
+     *
+     * @param array $scopeCriteria The scope criteria (optional).
+     *
+     * @return integer|null The min position or null if it does not exist.
+     */
     public function getMinPosition(array $scopeCriteria = array())
     {
         $document = $this
@@ -11,6 +18,13 @@
         return $document ? $document->get{{ options.field|ucfirst }}() : null;
     }
 
+    /**
+     * Returns the max position.
+     *
+     * @param array $scopeCriteria The scope criteria (optional).
+     *
+     * @return integer|null The max position or null if it does not exist.
+     */
     public function getMaxPosition(array $scopeCriteria = array())
     {
         $document = $this

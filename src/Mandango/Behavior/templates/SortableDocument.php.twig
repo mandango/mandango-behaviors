@@ -1,5 +1,10 @@
 <?php
 
+    /**
+     * Returns whether it is the first document.
+     *
+     * @return Boolean Whether it is the first document.
+     */
     public function isFirst()
     {
         $minPosition = $this->getRepository()->getMinPosition($this->sortableScopeCriteria());
@@ -7,6 +12,11 @@
         return $this->get{{ options.field|ucfirst }}() === $minPosition;
     }
 
+    /**
+     * Returns whether it is the last document.
+     *
+     * @return Boolean Whether it is the last document.
+     */
     public function isLast()
     {
         $maxPosition = $this->getRepository()->getMaxPosition($this->sortableScopeCriteria());
@@ -14,6 +24,11 @@
         return $this->get{{ options.field|ucfirst }}() === $maxPosition;
     }
 
+    /**
+     * Returns the previous document.
+     *
+     * @return Document|null The previous document, or null if it does not exist.
+     */
     public function getPrevious()
     {
         return $this
@@ -25,6 +40,11 @@
         ;
     }
 
+    /**
+     * Returns the next document.
+     *
+     * @return Document|null The next document, or null if it does not exist.
+     */
     public function getNext()
     {
         return $this
@@ -36,6 +56,16 @@
         ;
     }
 
+    /**
+     * Swaps the position with other document.
+     *
+     * @param Document $document The document to swap the position with.
+     *
+     * @throws \InvalidArgumentException If the document is not of the same class.
+     * @throws \RuntimeException         If any document is new.
+     * @throws \RuntimeException         If any document is modified.
+     * @throws \RuntimeException         If the scopes are different.
+     */
     public function swapPosition($document)
     {
         if (get_class($this) !== get_class($document)) {
@@ -61,6 +91,11 @@
         $document->refresh()->set{{ options.field|ucfirst }}($oldPosition)->save();
     }
 
+    /**
+     * Moves the document up.
+     *
+     * @throws \RuntimeException If the document is already the first.
+     */
     public function moveUp()
     {
         if (null === $previous = $this->getPrevious()) {
@@ -70,6 +105,11 @@
         $this->swapPosition($previous);
     }
 
+    /**
+     * Moves the document down.
+     *
+     * @throws \RuntimeException If the document is already the last.
+     */
     public function moveDown()
     {
         if (null === $next = $this->getNext()) {
