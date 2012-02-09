@@ -1,7 +1,0 @@
-<?php
-
-return array(
-    'mandango_dir'        => '/path/to/mandango',
-    'mondator_dir'        => '/path/to/mondator',
-    'symfony_dir'         => '/path/to/symfony',
-);

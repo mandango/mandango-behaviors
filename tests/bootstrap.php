@@ -1,8 +1,9 @@
 <?php
 
-$config = require(__DIR__.'/config.php');
+$vendorDir = __DIR__.'/../vendor';
+
 // autoloader
-require($config['symfony_dir'].'/src/Symfony/Component/ClassLoader/UniversalClassLoader.php');
+require($vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php');
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
@@ -10,9 +11,12 @@ $loader = new UniversalClassLoader();
 $loader->registerNamespaces(array(
     'Mandango\Tests'    => __DIR__,
     'Mandango\Behavior' => __DIR__.'/../src',
-    'Mandango\Mondator' => $config['mondator_dir'].'/src',
-    'Mandango'          => $config['mandango_dir'].'/src',
+    'Mandango\Mondator' => $vendorDir.'/mondator/src',
+    'Mandango'          => $vendorDir.'/mandango/src',
     'Model'             => __DIR__,
+));
+$loader->registerPrefixes(array(
+    'Twig_' => $vendorDir.'/twig/lib',
 ));
 $loader->register();
 
