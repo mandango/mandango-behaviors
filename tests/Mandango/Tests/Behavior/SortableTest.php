@@ -389,6 +389,34 @@ class SortableTest extends TestCase
         $this->assertSame(5, $documents['bar'][5]->getPosition());
     }
 
+    public function testDocumentSortableSetPositionScopeReference()
+    {
+        $sortable1 = $this->mandango->create('Model\Sortable')->setName('foo')->save();
+        $sortable2 = $this->mandango->create('Model\Sortable')->setName('bar')->save();
+
+        $documents = array();
+        for ($i = 1; $i <= 3; $i++) {
+            $documents[$i] = $this->mandango->create('Model\SortableScopeReference')
+                ->setName('foo')
+                ->setSortable($sortable1)
+                ->save()
+            ;
+        }
+        for ($i = 4; $i <= 5; $i++) {
+            $documents[$i] = $this->mandango->create('Model\SortableScopeReference')
+                ->setName('foo')
+                ->setSortable($sortable2)
+                ->save()
+            ;
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[2]->getPosition());
+        $this->assertSame(3, $documents[3]->getPosition());
+        $this->assertSame(1, $documents[4]->getPosition());
+        $this->assertSame(2, $documents[5]->getPosition());
+    }
+
     public function testDocumentSortableInheritance()
     {
         $documents = $this->createDocumentsInheritance(array('parent' => 3, 'child' => 2));

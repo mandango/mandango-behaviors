@@ -183,7 +183,11 @@
     {
         return array(
 {% for field in options.scope %}
+{% if config_class.referencesOne[field] is defined %}
+            '{{ field }}' => $this->get{{ field|ucfirst }}()->getId(),
+{% else %}
             '{{ field }}' => $this->get{{ field|ucfirst }}(),
+{% endif %}
 {% endfor %}
         );
     }

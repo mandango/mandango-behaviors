@@ -98,6 +98,17 @@ $configClasses = array(
             array('class' => 'Mandango\Behavior\Sortable', 'options' => array('scope' => array('type'))),
         ),
     ),
+    'Model\SortableScopeReference' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'referencesOne' => array(
+            'sortable' => array('class' => 'Model\Sortable'),
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable', 'options' => array('scope' => array('sortable'))),
+        ),
+    ),
     'Model\SortableParent' => array(
         'inheritable' => array('type' => 'single'),
         'fields' => array(
