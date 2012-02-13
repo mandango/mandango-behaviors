@@ -7,7 +7,7 @@
      */
     public function isFirst()
     {
-        $minPosition = $this->getRepository()->getMinPosition($this->sortableScopeCriteria());
+        $minPosition = $this->getSortableRepository()->getMinPosition($this->sortableScopeCriteria());
 
         return $this->get{{ options.field|ucfirst }}() === $minPosition;
     }
@@ -19,7 +19,7 @@
      */
     public function isLast()
     {
-        $maxPosition = $this->getRepository()->getMaxPosition($this->sortableScopeCriteria());
+        $maxPosition = $this->getSortableRepository()->getMaxPosition($this->sortableScopeCriteria());
 
         return $this->get{{ options.field|ucfirst }}() === $maxPosition;
     }
@@ -32,7 +32,7 @@
     public function getPrevious()
     {
         return $this
-            ->getRepository()
+            ->getSortableRepository()
             ->createQuery($this->sortableScopeCriteria())
             ->mergeCriteria(array('{{ options.field }}' => array('$lt' => $this->get{{ options.field|ucfirst }}())))
             ->sort(array('{{ options.field }}' => -1))
@@ -48,7 +48,7 @@
     public function getNext()
     {
         return $this
-            ->getRepository()
+            ->getSortableRepository()
             ->createQuery($this->sortableScopeCriteria())
             ->mergeCriteria(array('{{ options.field }}' => array('$gt' => $this->get{{ options.field|ucfirst }}())))
             ->sort(array('{{ options.field }}' => 1))
@@ -128,7 +128,7 @@
 {% if 'top' == options.new_position %}
                 $position = 1;
 {% else %}
-                $position = $this->getRepository()->getMaxPosition($this->sortableScopeCriteria()) + 1;
+                $position = $this->getSortableRepository()->getMaxPosition($this->sortableScopeCriteria()) + 1;
 {% endif %}
             }
         } else {
@@ -144,7 +144,7 @@
 
         // move documents
         if ($this->isNew()) {
-            $this->getRepository()->update(
+            $this->getSortableRepository()->update(
                 array_merge(
                     $this->sortableScopeCriteria(),
                     array('{{ options.field }}' => array('$gte' => $position))
@@ -153,7 +153,7 @@
                 array('multiple' => true)
             );
         } else {
-            $this->getRepository()->update(
+            $this->getSortableRepository()->update(
                 array_merge(
                     $this->sortableScopeCriteria(),
                     array('{{ options.field }}' => array(
@@ -169,7 +169,7 @@
 
     public function sortableRemovePosition()
     {
-        $this->getRepository()->update(
+        $this->getSortableRepository()->update(
             array_merge(
                 $this->sortableScopeCriteria(),
                 array('{{ options.field }}' => array('$gt' => $this->get{{ options.field|ucfirst }}()))
@@ -186,4 +186,20 @@
             '{{ field }}' => $this->get{{ field|ucfirst }}(),
 {% endfor %}
         );
+    }
+
+    protected function getSortableRepository()
+    {
+{% if config_class.inheritable or config_class.inheritance %}
+        $metadata = $this->getMetadata();
+        if (false !== $metadata['inheritance']) {
+            $repository = $this->getRepository()->getLastParentRepository();
+        } else {
+            $repository = $this->getRepository();
+        }
+
+        return $repository;
+{% else %}
+        return $this->getRepository();
+{% endif %}
     }

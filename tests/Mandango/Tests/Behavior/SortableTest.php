@@ -37,6 +37,24 @@ class SortableTest extends TestCase
         $this->assertFalse($documents['bar'][3]->isFirst());
     }
 
+    public function testDocumentIsFirstInheritanceParent()
+    {
+        $documents = $this->createDocumentsInheritance(array('parent' => 2, 'child' => 1));
+
+        $this->assertTrue($documents[1]->isFirst());
+        $this->assertFalse($documents[2]->isFirst());
+        $this->assertFalse($documents[3]->isFirst());
+    }
+
+    public function testDocumentIsFirstInheritanceChild()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 2, 'parent' => 1));
+
+        $this->assertTrue($documents[1]->isFirst());
+        $this->assertFalse($documents[2]->isFirst());
+        $this->assertFalse($documents[3]->isFirst());
+    }
+
     public function testDocumentIsLast()
     {
         $documents = $this->createDocuments(3);
@@ -57,6 +75,24 @@ class SortableTest extends TestCase
         $this->assertFalse($documents['bar'][1]->isLast());
         $this->assertFalse($documents['bar'][2]->isLast());
         $this->assertTrue($documents['bar'][3]->isLast());
+    }
+
+    public function testDocumentIsLastInheritanceParent()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 1, 'parent' => 2));
+
+        $this->assertFalse($documents[1]->isLast());
+        $this->assertFalse($documents[2]->isLast());
+        $this->assertTrue($documents[3]->isLast());
+    }
+
+    public function testDocumentIsLastInheritanceChild()
+    {
+        $documents = $this->createDocumentsInheritance(array('parent' => 1, 'child' => 1));
+
+
+        $this->assertFalse($documents[1]->isLast());
+        $this->assertTrue($documents[2]->isLast());
     }
 
     public function testDocumentGetPrevious()
@@ -81,6 +117,16 @@ class SortableTest extends TestCase
         $this->assertSame($documents['bar'][2], $documents['bar'][3]->getPrevious());
     }
 
+    public function testDocumentGetPreviousInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('parent' => 2, 'child' => 2));
+
+        $this->assertNull($documents[1]->getPrevious());
+        $this->assertEquals($documents[1]->getId(), $documents[2]->getPrevious()->getId());
+        $this->assertEquals($documents[2]->getId(), $documents[3]->getPrevious()->getId());
+        $this->assertEquals($documents[3]->getId(), $documents[4]->getPrevious()->getId());
+    }
+
     public function testDocumentGetNext()
     {
         $documents = $this->createDocuments(3);
@@ -101,6 +147,16 @@ class SortableTest extends TestCase
         $this->assertSame($documents['bar'][2], $documents['bar'][1]->getNext());
         $this->assertSame($documents['bar'][3], $documents['bar'][2]->getNext());
         $this->assertNull($documents['bar'][3]->getNext());
+    }
+
+    public function testDocumentGetNextInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 2, 'parent' => 2));
+
+        $this->assertEquals($documents[2]->getId(), $documents[1]->getNext()->getId());
+        $this->assertEquals($documents[3]->getId(), $documents[2]->getNext()->getId());
+        $this->assertEquals($documents[4]->getId(), $documents[3]->getNext()->getId());
+        $this->assertNull($documents[4]->getNext());
     }
 
     public function testDocumentSwapPosition()
@@ -333,6 +389,17 @@ class SortableTest extends TestCase
         $this->assertSame(5, $documents['bar'][5]->getPosition());
     }
 
+    public function testDocumentSortableInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('parent' => 3, 'child' => 2));
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[2]->getPosition());
+        $this->assertSame(3, $documents[3]->getPosition());
+        $this->assertSame(4, $documents[4]->getPosition());
+        $this->assertSame(5, $documents[5]->getPosition());
+    }
+
     public function testDocumentSortableSetPositionTop()
     {
         $documents = $this->createDocuments(5, true);
@@ -399,6 +466,27 @@ class SortableTest extends TestCase
         $this->assertSame(5, $documents['bar'][5]->getPosition());
     }
 
+    public function testDocumentSortableSetPositionMoveDocumentsNewInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 3, 'parent' => 2));
+        $documents[6] = $this->mandango->create('Model\SortableChild')
+            ->setName('foo')
+            ->setPosition(3)
+            ->save()
+        ;
+
+        foreach ($documents as $document) {
+            $document->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[2]->getPosition());
+        $this->assertSame(3, $documents[6]->getPosition());
+        $this->assertSame(4, $documents[3]->getPosition());
+        $this->assertSame(5, $documents[4]->getPosition());
+        $this->assertSame(6, $documents[5]->getPosition());
+    }
+
     public function testDocumentSortableSetPositionEditPositionUp()
     {
         $documents = $this->createDocuments(5);
@@ -437,6 +525,22 @@ class SortableTest extends TestCase
         $this->assertSame(3, $documents['bar'][3]->getPosition());
         $this->assertSame(4, $documents['bar'][4]->getPosition());
         $this->assertSame(5, $documents['bar'][5]->getPosition());
+    }
+
+    public function testDocumentSortableSetPositionEditPositionUpInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('parent' => 3, 'child' => 2));
+        $documents[4]->setPosition(2)->save();
+
+        foreach ($documents as $document) {
+            $document->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[4]->getPosition());
+        $this->assertSame(3, $documents[2]->getPosition());
+        $this->assertSame(4, $documents[3]->getPosition());
+        $this->assertSame(5, $documents[5]->getPosition());
     }
 
     public function testDocumentSortableSetPositionEditPositionDown()
@@ -479,6 +583,22 @@ class SortableTest extends TestCase
         $this->assertSame(5, $documents['bar'][5]->getPosition());
     }
 
+    public function testDocumentSortableSetPositionEditPositionDownInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 3, 'parent' => 2));
+        $documents[2]->setPosition(4)->save();
+
+        foreach ($documents as $document) {
+            $document->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[3]->getPosition());
+        $this->assertSame(3, $documents[4]->getPosition());
+        $this->assertSame(4, $documents[2]->getPosition());
+        $this->assertSame(5, $documents[5]->getPosition());
+    }
+
     public function testDocumentSortableRemovePosition()
     {
         $documents = $this->createDocuments(5);
@@ -517,6 +637,22 @@ class SortableTest extends TestCase
         $this->assertSame(3, $documents['bar'][3]->getPosition());
         $this->assertSame(4, $documents['bar'][4]->getPosition());
         $this->assertSame(5, $documents['bar'][5]->getPosition());
+    }
+
+    public function testDocumentSortableRemovePositionInheritance()
+    {
+        $documents = $this->createDocumentsInheritance(array('child' => 3, 'parent' => 2));
+        $documents[2]->delete();
+        unset($documents[2]);
+
+        foreach ($documents as $doc) {
+            $doc->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[3]->getPosition());
+        $this->assertSame(3, $documents[4]->getPosition());
+        $this->assertSame(4, $documents[5]->getPosition());
     }
 
     public function testRepositoryGetMinPosition()
@@ -578,6 +714,25 @@ class SortableTest extends TestCase
             }
         }
         $this->mandango->flush();
+
+        return $documents;
+    }
+
+    private function createDocumentsInheritance(array $what)
+    {
+        $documents = array();
+        $idx = 0;
+        foreach ($what as $type => $nb) {
+            if ('parent' === $type) {
+                for ($i = 0; $i < $nb; $i++) {
+                    $documents[++$idx] = $this->mandango->create('Model\SortableParent')->setName('foo')->save();
+                }
+            } elseif ('child' === $type) {
+                for ($i = 0; $i < $nb; $i++) {
+                    $documents[++$idx] = $this->mandango->create('Model\SortableChild')->setName('foo')->save();
+                }
+            }
+        }
 
         return $documents;
     }

@@ -98,6 +98,18 @@ $configClasses = array(
             array('class' => 'Mandango\Behavior\Sortable', 'options' => array('scope' => array('type'))),
         ),
     ),
+    'Model\SortableParent' => array(
+        'inheritable' => array('type' => 'single'),
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable'),
+        ),
+    ),
+    'Model\SortableChild' => array(
+        'inheritance' => array('class' => 'Model\SortableParent', 'value' => 'child'),
+    ),
     // Timestampable
     'Model\Timestampable' => array(
         'fields' => array(
