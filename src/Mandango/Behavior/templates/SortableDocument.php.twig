@@ -121,6 +121,10 @@
 
     public function sortableSetPosition()
     {
+        if ($this->sortableSkip()) {
+            return;
+        }
+
         $position = $this->get{{ options.field|ucfirst }}();
 
         if ($this->isNew()) {
@@ -177,6 +181,11 @@
             array('$inc' => array('{{ options.field }}' => -1)),
             array('multiple' => true)
         );
+    }
+
+    public function sortableSkip()
+    {
+        return false;
     }
 
     public function sortableScopeCriteria()

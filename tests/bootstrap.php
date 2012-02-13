@@ -109,6 +109,14 @@ $configClasses = array(
             array('class' => 'Mandango\Behavior\Sortable', 'options' => array('scope' => array('sortable'))),
         ),
     ),
+    'Model\SortableSkip' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Sortable'),
+        ),
+    ),
     'Model\SortableParent' => array(
         'inheritable' => array('type' => 'single'),
         'fields' => array(

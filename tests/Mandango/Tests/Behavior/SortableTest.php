@@ -417,6 +417,24 @@ class SortableTest extends TestCase
         $this->assertSame(2, $documents[5]->getPosition());
     }
 
+    public function testDocumentSortableSetPositionSkip()
+    {
+        $documents = array();
+        for ($i = 1; $i <= 5; $i++) {
+            $documents[$i] = $this->mandango->create('Model\SortableSkip')
+                ->setName('foo')
+                ->setSkip($i % 2 ? false : true)
+                ->save()
+            ;
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertNull($documents[2]->getPosition());
+        $this->assertSame(2, $documents[3]->getPosition());
+        $this->assertNull($documents[4]->getPosition());
+        $this->assertSame(3, $documents[5]->getPosition());
+    }
+
     public function testDocumentSortableInheritance()
     {
         $documents = $this->createDocumentsInheritance(array('parent' => 3, 'child' => 2));
@@ -665,6 +683,29 @@ class SortableTest extends TestCase
         $this->assertSame(3, $documents['bar'][3]->getPosition());
         $this->assertSame(4, $documents['bar'][4]->getPosition());
         $this->assertSame(5, $documents['bar'][5]->getPosition());
+    }
+
+    public function testDocumentSortableRemovePositionSkip()
+    {
+        $documents = array();
+        for ($i = 1; $i <= 5; $i++) {
+            $documents[$i] = $this->mandango->create('Model\SortableSkip')
+                ->setName('foo')
+                ->setSkip($i % 2 ? false : true)
+                ->save()
+            ;
+        }
+        $documents[3]->delete();
+        unset($documents[3]);
+
+        foreach ($documents as $doc) {
+            $doc->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertNull($documents[2]->getPosition());
+        $this->assertNull($documents[4]->getPosition());
+        $this->assertSame(2, $documents[5]->getPosition());
     }
 
     public function testDocumentSortableRemovePositionInheritance()
