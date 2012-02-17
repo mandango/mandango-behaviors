@@ -366,6 +366,49 @@ class SortableTest extends TestCase
         $this->assertSame(5, $documents[5]->getPosition());
     }
 
+    public function testDocumentSortableSetPositionSameStringPosition()
+    {
+        $documents = $this->createDocuments(5);
+        $documents[2]->setPosition('2')->save();
+
+        foreach ($documents as $document) {
+            $document->refresh();
+        }
+
+        $this->assertSame(1, $documents[1]->getPosition());
+        $this->assertSame(2, $documents[2]->getPosition());
+        $this->assertSame(3, $documents[3]->getPosition());
+        $this->assertSame(4, $documents[4]->getPosition());
+        $this->assertSame(5, $documents[5]->getPosition());
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @dataProvider documentSortableSetPositionLowerThanMinProvider
+     */
+    public function testDocumentSortableSetPositionLowerThanMin($position)
+    {
+        $documents = $this->createDocuments(3);
+        $this->mandango->create('Model\Sortable')->setName('foo')->setPosition($position)->save();
+    }
+
+    public function documentSortableSetPositionLowerThanMinProvider()
+    {
+        return array(
+            array(0),
+            array(-1),
+        );
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testDocumentSortableSetPositionHigherThanMax()
+    {
+        $documents = $this->createDocuments(3);
+        $this->mandango->create('Model\Sortable')->setName('foo')->setPosition(5)->save();
+    }
+
     public function testDocumentSortableSetPositionScope()
     {
         $documents = $this->createScopeDocuments(5);

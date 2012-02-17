@@ -125,14 +125,16 @@
             return;
         }
 
+        $maxPosition = (int) $this->getSortableRepository()->getMaxPosition($this->sortableScopeCriteria());
+
         $position = $this->get{{ options.field|ucfirst }}();
 
         if ($this->isNew()) {
-            if (!$position) {
+            if (null === $position) {
 {% if 'top' == options.new_position %}
                 $position = 1;
 {% else %}
-                $position = $this->getSortableRepository()->getMaxPosition($this->sortableScopeCriteria()) + 1;
+                $position = $maxPosition + 1;
 {% endif %}
             }
         } else {
@@ -141,9 +143,21 @@
             }
 
             $oldPosition = $this->getOriginalFieldValue('{{ options.field }}');
+
+            if ((int) $position === $oldPosition) {
+                return;
+            }
         }
 
         $position = (int) $position;
+
+        if ($position < 1) {
+            throw new \RuntimeException('The position cannot be lower than 1.');
+        }
+        if ($position > ($maxPosition + 1)) {
+            throw new \RuntimeException('The position cannot be higher than the max.');
+        }
+
         $this->set{{ options.field|ucfirst }}($position);
 
         // move documents
