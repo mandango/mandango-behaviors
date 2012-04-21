@@ -1,5 +1,5 @@
 {
-    "name": "mandango/mondator-behaviors",
+    "name": "mandango/mandango-behaviors",
     "description": "Bahaviors for Mandango, the easy and flexible class generator for PHP",
     "keywords": ["mandango","behaviors"],
     "type": "library",
