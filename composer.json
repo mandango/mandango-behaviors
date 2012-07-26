@@ -17,5 +17,6 @@
     },
     "autoload": {
         "psr-0": { "Mandango\\Behavior\\": "src/" }
-    }
+    },
+    "minimum-stability": "dev"
 }
