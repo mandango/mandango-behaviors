@@ -1,0 +1,17 @@
+<?php
+
+    public function archive()
+    {
+        $archive = $this->getMandango()->create('{{ extension.archiveClass }}');
+
+        $archive->set{{ options.id_field }}($this->getId());
+        $archive->set{{ options.archived_at_field }}(new \DateTime());
+
+{% for field in config_class.fields|keys %}
+        $archive->set{{ field|ucfirst }}($this->get{{ field|ucfirst }}());
+{% endfor %}
+
+        $archive->save();
+
+        return $archive;
+    }

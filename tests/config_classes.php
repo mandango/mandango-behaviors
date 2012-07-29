@@ -1,6 +1,64 @@
 <?php
 
 return array(
+    'Model\Article' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+    ),
+    // Archivable
+    'Model\Archivable' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Archivable')
+        ),
+    ),
+    'Model\ArchivableReference' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+        'referencesOne' => array(
+            'article' => array('class' => 'Model\Article'),
+        ),
+        'behaviors' => array(
+            array('class' => 'Mandango\Behavior\Archivable')
+        ),
+    ),
+    'Model\ArchivableInsert' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+        'behaviors' => array(
+            array(
+                'class'   => 'Mandango\Behavior\Archivable',
+                'options' => array('archive_on_insert' => true),
+            )
+        ),
+    ),
+    'Model\ArchivableUpdate' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+        'behaviors' => array(
+            array(
+                'class'   => 'Mandango\Behavior\Archivable',
+                'options' => array('archive_on_update' => true),
+            )
+        ),
+    ),
+    'Model\ArchivableDelete' => array(
+        'fields' => array(
+            'title' => 'string',
+        ),
+        'behaviors' => array(
+            array(
+                'class'   => 'Mandango\Behavior\Archivable',
+                'options' => array('archive_on_delete' => true),
+            )
+        ),
+    ),
     // Hashable
     'Model\Hashable' => array(
         'fields' => array(
