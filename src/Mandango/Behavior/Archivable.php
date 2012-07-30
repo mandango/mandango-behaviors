@@ -42,55 +42,31 @@ class Archivable extends ClassExtension
      */
     protected function doNewConfigClassesProcess()
     {
+        if ($this->isNotArchivable()) {
+            return;
+        }
+
         $this->newConfigClasses[$this->getArchiveClass()] = $this->getArchiveConfigClass();
     }
 
     private function getArchiveConfigClass()
     {
         return array(
+            'archive' => true,
+            'output' => isset($this->configClass['output'])
+                      ? $this->configClass['output']
+                      : null,
             'fields' => array_merge($this->configClass['fields'], array(
                 $this->getOption('id_field')          => 'string',
                 $this->getOption('archived_at_field') => 'date',
             )),
             'referencesOne'  => isset($this->configClass['referencesOne'])
-                                ? $this->configClass['referencesOne']
-                                : null,
+                              ? $this->configClass['referencesOne']
+                              : null,
             'referencesMany' => isset($this->configClass['referencesMany'])
-                                ? $this->configClass['referencesMany']
-                                : null,
+                              ? $this->configClass['referencesMany']
+                              : null,
         );
-    }
-
-    private function removeIdGenerator($configClass)
-    {
-        unset($configClass['idGenerator']);
-
-        return $configClass;
-    }
-
-    private function removeArchiveExtension($configClass)
-    {
-        foreach ($configClass['behaviors'] as $key => $value) {
-            if ($value['class'] === 'Mandango\Behavior\Archivable') {
-                unset($configClass['behaviors'][$key]);
-            }
-        }
-
-        return $configClass;
-    }
-
-    private function addIdField($configClass)
-    {
-        $configClass['fields'][$this->getOption('id_field')] = 'string';
-
-        return $configClass;
-    }
-
-    private function addArchivedAtField($configClass)
-    {
-        $configClass['fields'][$this->getOption('archived_at_field')] = 'date';
-
-        return $configClass;
     }
 
     /**
@@ -98,6 +74,10 @@ class Archivable extends ClassExtension
      */
     protected function doConfigClassProcess()
     {
+        if ($this->isNotArchivable()) {
+            return;
+        }
+
         foreach (array('insert', 'update', 'delete') as $action) {
             if ($this->getOption('archive_on_'.$action)) {
                 $this->configClass['events']['pre'.ucfirst($action)][] = 'archive';
@@ -110,6 +90,10 @@ class Archivable extends ClassExtension
      */
     protected function doClassProcess()
     {
+        if ($this->isNotArchivable()) {
+            return;
+        }
+
         $this->processTemplate($this->definitions['document_base'],
             file_get_contents(__DIR__.'/templates/ArchivableDocument.php.twig')
         );
@@ -118,6 +102,12 @@ class Archivable extends ClassExtension
     public function getArchiveClass()
     {
         return str_replace('%class%', $this->class, $this->getOption('archive_class'));
+    }
+
+    private function isNotArchivable()
+    {
+        return !empty($this->configClass['archive'])
+            || !empty($this->configClass['inheritance']);
     }
 
     protected function configureTwig(\Twig_Environment $twig)
