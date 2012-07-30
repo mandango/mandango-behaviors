@@ -56,6 +56,9 @@ class Archivable extends ClassExtension
             'output' => isset($this->configClass['output'])
                       ? $this->configClass['output']
                       : null,
+            'connection' => isset($this->configClass['connection'])
+                          ? $this->configClass['connection']
+                          : null,
             'fields' => array_merge($this->configClass['fields'], array(
                 $this->getOption('id_field')          => 'string',
                 $this->getOption('archived_at_field') => 'date',
