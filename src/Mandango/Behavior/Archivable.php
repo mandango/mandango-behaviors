@@ -65,10 +65,10 @@ class Archivable extends ClassExtension
             )),
             'referencesOne'  => isset($this->configClass['referencesOne'])
                               ? $this->configClass['referencesOne']
-                              : null,
+                              : array(),
             'referencesMany' => isset($this->configClass['referencesMany'])
                               ? $this->configClass['referencesMany']
-                              : null,
+                              : array(),
         );
     }
 
