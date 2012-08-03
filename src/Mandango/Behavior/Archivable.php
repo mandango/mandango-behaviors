@@ -83,6 +83,11 @@ class Archivable extends ClassExtension
             return;
         }
 
+        $this->configClasses[$this->getArchiveClass()]['fields'] = array_merge(
+            $this->configClasses[$this->getArchiveClass()]['fields'],
+            $this->configClass['fields']
+        );
+
         foreach (array('insert', 'update', 'delete') as $action) {
             if ($this->getOption('archive_on_'.$action)) {
                 $this->configClass['events']['pre'.ucfirst($action)][] = 'archive';

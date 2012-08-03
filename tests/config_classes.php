@@ -12,7 +12,8 @@ return array(
             'title' => 'string',
         ),
         'behaviors' => array(
-            array('class' => 'Mandango\Behavior\Archivable')
+            array('class' => 'Mandango\Behavior\Hashable'),
+            array('class' => 'Mandango\Behavior\Archivable'),
         ),
     ),
     'Model\ArchivableReference' => array(
