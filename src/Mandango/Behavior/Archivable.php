@@ -53,6 +53,7 @@ class Archivable extends ClassExtension
     {
         return array(
             'archive' => true,
+            'archive_from' => $this->class,
             'output' => isset($this->configClass['output'])
                       ? $this->configClass['output']
                       : null,
@@ -79,14 +80,16 @@ class Archivable extends ClassExtension
      */
     protected function doConfigClassProcess()
     {
+        if ($this->isArchive()) {
+            $this->configClass['fields'] = array_merge(
+                $this->configClass['fields'],
+                $this->configClasses[$this->getArchiveFrom()]['fields']
+            );
+        }
+
         if ($this->isNotArchivable()) {
             return;
         }
-
-        $this->configClasses[$this->getArchiveClass()]['fields'] = array_merge(
-            $this->configClasses[$this->getArchiveClass()]['fields'],
-            $this->configClass['fields']
-        );
 
         foreach (array('insert', 'update', 'delete') as $action) {
             if ($this->getOption('archive_on_'.$action)) {
@@ -112,6 +115,16 @@ class Archivable extends ClassExtension
     public function getArchiveClass()
     {
         return str_replace('%class%', $this->class, $this->getOption('archive_class'));
+    }
+
+    private function isArchive()
+    {
+        return !empty($this->configClass['archive']);
+    }
+
+    private function getArchiveFrom()
+    {
+        return $this->configClass['archive_from'];
     }
 
     private function isNotArchivable()
