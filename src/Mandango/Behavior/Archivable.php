@@ -60,18 +60,24 @@ class Archivable extends ClassExtension
             'connection' => isset($this->configClass['connection'])
                           ? $this->configClass['connection']
                           : null,
-            'fields' => isset($this->configClass['fields'])
-                        ? array_merge($this->configClass['fields'], array(
-                            $this->getOption('id_field')          => 'string',
-                            $this->getOption('archived_at_field') => 'date',
-                        ))
-                        : array(),
+            'fields' => array_merge(
+                            isset($this->configClass['fields'])
+                                ? $this->configClass['fields']
+                                : array(),
+                            array(
+                                $this->getOption('id_field')          => 'string',
+                                $this->getOption('archived_at_field') => 'date',
+                            )
+                        ),
             'referencesOne'  => isset($this->configClass['referencesOne'])
                               ? $this->configClass['referencesOne']
                               : array(),
             'referencesMany' => isset($this->configClass['referencesMany'])
                               ? $this->configClass['referencesMany']
                               : array(),
+            'behaviors' => array(
+                array('class' => 'Mandango\Behavior\Archivable'),
+            ),
         );
     }
 
